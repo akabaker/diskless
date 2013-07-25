@@ -1,0 +1,7 @@
+default netboot6
+ timeout 30
+ prompt 1
+
+ label netboot6
+ kernel /vmlinuz-2.6.32-358.el6.x86_64
+ append initrd=/netboot6.img rw root=nfs:192.168.122.10:/exports/cent6 selinux=0 enforcing=0

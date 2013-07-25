@@ -1,0 +1,266 @@
+    1  yum localinstall http://yum.puppetlabs.com/el/6Server/products/x86_64/puppetlabs-release-6-7.noarch.rpm
+    2  yum install puppet
+    3  ls
+    4  puppet module install puppet module install theforeman/dhcp
+    5  puppet module install theforeman/dhcp
+    6  ls
+    7  vim dhcp.pp
+    8  yum install vim -y
+    9  vim dhcp.pp
+   10  ifconfig
+   11  vim dhcp.pp
+   12  mkdir /var/lib/tftpboot
+   13  yum install tftp-server tftp dhcp
+   14  vim /etc/xinetd.d/tftp 
+   15  yum install xinetd sysling dracut-network
+   16  yum install syslinux
+   17  cp /usr/share/syslinux/pxelinux.0 /var/lib/tftpboot/
+   18  mkdir -p /var/lib/tftpboot/pxelinux.cfg
+   19  service iptables stop
+   20  vim /etc/dhcp/dhcpd.conf 
+   21  cd /etc/sysconfig/network
+   22  ls
+   23  cd /etc/sysconfig/network-scripts/c
+   24  cd /etc/sysconfig/network-scripts/
+   25  ls
+   26  cp ifcfg-eth0 ifcfg-eth1
+   27  vim ifcfg-eth1
+   28  ifup eth1
+   29  ifconfig
+   30  ls /sys/class/net/
+   31  ifup eth1
+   32  ifconfig
+   33  service network restart
+   34  v
+   35  ifconfig
+   36  vim ifcfg-eth1 
+   37  ifup eth1
+   38  ifconfig
+   39  vim ifcfg-eth1 
+   40  ifdown eth1
+   41  ifup eth1
+   42  ifconfig
+   43  vim ifcfg-eth1 
+   44  vim /etc/dhcp/dhcpd
+   45  vim /etc/dhcp/dhcpd.conf 
+   46  vim /etc/sysconfig/dhcpd
+   47  service dhcpd start
+   48  ifconfig
+   49  mkdir /exports/cent6
+   50  mkdir -p /exports/cent6
+   51  yum groupinstall Base --installroot=/exports/cent6/
+   52  yum install rsync -y
+   53  rsync -a --exclude='/proc/*' --exclude='/sys/*' / /exports/cent6/
+   54  ls /exports/cent6/
+   55  rm -rf /exports/cent6/exports/
+   56  ls -la /exports/cent6/
+   57  yum check-update
+   58  ls
+   59  rm -rf /exports/cent6/*
+   60  ls -la /exports/cent6/
+   61  rm /exports/cent6/.autofsck 
+   62  yum groupinstall Base --installroot=/exports/cent6/
+   63  yum clean all
+   64  yum groupinstall "Base: --installroot=/exports/cent6/
+   65  yum groupinstall "Base" --installroot=/exports/cent6/
+   66  rsync -a --exclude='/proc/*' --exclude='/sys/*' --exclude='/exports/' / /exports/cent6/
+   67  vim /exports/cent6/etc/fstab 
+   68  cp /boot/vmlinuz-2.6.32-358.el6.x86_64 /var/lib/tftpboot/
+   69  dracut initramfs-2.6.32-358.el6.x86_64.img vmlinuz-2.6.32-358.el6.x86_64
+   70  cp initramfs-2.6.32-358.el6.x86_64.img /var/lib/tftpboot/
+   71  vim /var/lib/tftpboot/pxelinux.cfg/default
+   72  ls /exports/cent6/
+   73  vim /var/lib/tftpboot/pxelinux.cfg/default
+   74  service dhcpd start
+   75  service tftpd start
+   76  /etc/init.d/xinetd status
+   77  /etc/init.d/xinetd start
+   78  netstat -tnlp
+   79  netstat -unlp
+   80  vim /etc/dhcp/dhcpd.conf 
+   81  service xinetd restart
+   82  vim /etc/xinetd.d/tftp 
+   83  vim /etc/dhcp/dhcpd.conf 
+   84  service dhcpd restart
+   85  cp /boot/vmlinuz-2.6.32-358.el6.x86_64 /var/lib/tftpboot/
+   86  ls
+   87  cp initramfs-2.6.32-358.el6.x86_64.img /var/lib/tftpboot/
+   88  ls -la /var/lib/tftpboot/
+   89  service dhcpd restart
+   90  service xinetd restart
+   91  ls /lib/modules/
+   92  ls /lib/modules/2.6.32-358.el6.x86_64/modules.dep
+   93  ls
+   94  rm initramfs-2.6.32-358.el6.x86_64.img 
+   95  rm /var/lib/tftpboot/vmlinuz-2.6.32-358.el6.x86_64 
+   96  rm /var/lib/tftpboot/initramfs-2.6.32-358.el6.x86_64.img 
+   97  ls
+   98  cd ~
+   99  ls
+  100  yum install nfs
+  101  yum search nfs
+  102  yum install nfs-utils nfs-server
+  103  yum install nfs-utils
+  104  /etc/init.d/nfs start
+  105  vim /etc/exports 
+  106  ls /exports/cent6/
+  107  mkdir /mnt/omg
+  108  /etc/init.d/nfs start
+  109  yum install mountd
+  110  less /var/log/messages 
+  111  yum install portmap
+  112  service portmap start
+  113  /etc/init.d/rpcbind status
+  114  service rpcbind status
+  115  service rpcbind start
+  116  chkconfig rpcbind on
+  117  chkconfig nfs on
+  118  service nfs start
+  119  ls
+  120  showmount -e 192.168.123.1
+  121  cat /var/lib/tftpboot/pxelinux.cfg/default 
+  122  mount -t 192.168.123.1:/exports/cent6 /mnt/omg/
+  123  mount -t nfs 192.168.123.1:/exports/cent6 /mnt/omg
+  124  ls /mnt/omg
+  125  umount /mnt/omg
+  126  service dhcpd restart
+  127  chkconfig dhcpd on
+  128  chkconfig xinetd on
+  129  cd /var/lib/tftpboot/
+  130  ls
+  131  cp /boot/vmlinuz-2.6.32-358.el6.x86_64 .
+  132  ls
+  133  dracut initramfs-2.6.32-358.el6.x86_64.img vmlinuz-2.6.32-358.el6.x86_64
+  134  ls /lib/modules/
+  135  dracut initramfs-2.6.32-358.el6.x86_64.img 2.6.32-358.el6.x86_64
+  136  ls
+  137  rm initramfs-2.6.32-358.el6.x86_64.img 
+  138  dracut initramfs-2.6.32-358.el6.x86_64.img 2.6.32-358.el6.x86_64
+  139  cat pxelinux.cfg/default 
+  140  less /var/log/messages 
+  141  dmesg
+  142  serivce network stop
+  143  service network stop
+  144  ls
+  145  vim /etc/dhcp/dhcpd.conf 
+  146  ifconfig
+  147  ls /sys/class/net/
+  148  cd /etc/sysconfig/network
+  149  ls
+  150  cd /etc/sysconfig/network-scripts/
+  151  ls
+  152  vim ifcfg-eth1 
+  153  mv ifcfg-eth1 ifcfg-eth2
+  154  ifup eth2
+  155  vim /etc/sysconfig/dhcpd
+  156  service dhcpd restart
+  157  service tftpd restart
+  158  service xinetd restart
+  159  service nfs restart
+  160  vim /etc/sysconfig/nfs 
+  161  showmount -e 192.168.123.1
+  162  ifconfig
+  163  mount -t nfs 192.168.123.1:/exports/cent6 /mnt/omg
+  164  dvim /exports/cent6/etc/fstab 
+  165  ifconfig
+  166  showmount -e
+  167  showmount -e localhost
+  168  vim /exports/cent6/etc/fstab 
+  169  vim /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth0
+  170  vim /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth1
+  171  rm /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth1
+  172  service iptables stop
+  173  netstat -tnlp
+  174  vim /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth1
+  175  vim /exports/cent6/etc/fstab 
+  176  vim /var/lib/tftpboot/pxelinux.cfg/default 
+  177  service xinetd restart
+  178  service nfs restart
+  179  vim /var/lib/tftpboot/pxelinux.cfg/default 
+  180  netstat -tnlp
+  181  vim /etc/dhcp/dhcpd.conf 
+  182  vim /var/lib/tftpboot/pxelinux.cfg/default 
+  183  vim /etc/sysconfig/network-scripts/ifcfg-eth0 
+  184  ip route list
+  185  ping www.google.com
+  186  ping 192.168.122.1
+  187  vim /etc/sysconfig/network-scripts/ifcfg-eth0 
+  188  service network restart
+  189  vim /etc/dhcp/dhcpd.conf 
+  190  ifconfig
+  191  vim /var/lib/tftpboot/pxelinux.cfg/default 
+  192  showmount -e
+  193  showmount -e 192.168.122.10
+  194  vim /etc/exports 
+  195  service dhcpd restart
+  196  ifconfig
+  197  vim /etc/sysconfig/dhcpd
+  198  ifdown eth2
+  199  service network restart
+  200  ifdown eth2
+  201  service dhcpd restart
+  202  service iptables stop
+  203  service xinetd restart
+  204  vim /var/lib/tftpboot/pxelinux.cfg/default 
+  205  vim /etc/sysconfig/dhcpd
+  206  vim /var/lib/tftpboot/pxelinux.cfg/default 
+  207  vim /etc/dhcp/dhcpd
+  208  vim /etc/dhcp/dhcpd.conf 
+  209  service dhcpd restart
+  210  tcpdump -i eth0 not port 22
+  211  ls
+  212  history
+  213  ls
+  214  cd /var/lib/tftpboot/
+  215  ls
+  216  history
+  217  ls
+  218  rm vmlinuz-2.6.32-358.el6.x86_64 
+  219  rm initramfs-2.6.32-358.el6.x86_64.img 
+  220  cp /boot/vmlinuz-2.6.32-358.el6.x86_64 .
+  221  dracut initramfs-2.6.32-358.el6.x86_64.img 2.6.32-358.el6.x86_64
+  222  vim /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth0 
+  223  cp /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth0 /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth1
+  224  vim /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth1
+  225  service xinetd restart
+  226  service dhcpd restart
+  227  ls /exports/cent6/sys/
+  228  ls /exports/cent6/proc/
+  229  vim /exports/cent6/etc/fstab 
+  230  vim /etc/exports 
+  231  service rpcbind restart
+  232  service nfs restart
+  233  dracut -h
+  234  dracut -f /var/lib/tftpboot/netboot6.img `uname -r` root=dhcp root-path=nfs:192.168.122.10:/exports/cent6
+  235  vim /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth0
+  236  vim /exports/cent6/etc/sysconfig/network-scripts/ifcfg-eth1
+  237  vim /var/lib/tftpboot/pxelinux.cfg/default 
+  238  ls /exports/cent6/
+  239  service xinetd restart
+  240  service dhcpd restart
+  241  ls
+  242  rm initramfs-2.6.32-358.el6.x86_64.img 
+  243  vim /var/lib/tftpboot/pxelinux.cfg/default 
+  244  service xinetd restart
+  245  vim /etc/exports 
+  246  vim /exports/cent6/etc/fstab 
+  247  service nfs restart
+  248  service rpcbind restart
+  249  vim /exports/cent6/etc/fstab 
+  250  vim /etc/exports 
+  251  service nfs restart
+  252  service rpcbind restart
+  253  vim /etc/exports 
+  254  vim /exports/cent6/etc/fstab 
+  255  service rpcbind restart
+  256  service nfs restart
+  257  ls
+  258  shutdown -h now
+  259  ls
+  260  which scp
+  261  yum install scp -y
+  262  sudo yum search scp
+  263  yum install openssh-clients -y
+  264  ls
+  265  history
+  266  history > diskless_history.txt
