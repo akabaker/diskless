@@ -1,0 +1,40 @@
+### Install
+
+xinetd nfs rpcbind nfs-utils-lib dracut-network syslinux
+
+### Configure
+1.
+    mkdir /var/lib/tftpboot
+    yum install tftp-server tftp dhcp
+    vim /etc/xinetd.d/tftp 
+    yum install xinetd sysling dracut-network syslinux
+    cp /usr/share/syslinux/pxelinux.0 /var/lib/tftpboot/
+    mkdir -p /var/lib/tftpboot/pxelinux.cfg
+
+2   /etc/xinetd.d/tftp (DISABLE NO)
+3. Set up dhcp
+4. Set up nfs export, server
+5. Copy base into the nfs export (rsync)
+    mkdir -p /exports/cent6
+    yum groupinstall Base --installroot=/exports/cent6/
+    or
+    rsync -a --exclude='/proc/*' --exclude='/sys/*' --exclude='/exports/' / /exports/cent6/
+
+6. fstab
+#
+# /etc/fstab
+# Created by anaconda on Sun Jul 14 17:34:15 2013
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+192.168.122.10:/exports/cent6  /     nfs     defaults 0 0
+#192.168.123.1:/exports/cent6  /     nfs     defaults 0 0
+none            /tmp            tmpfs   defaults        0 0
+tmpfs           /dev/shm        tmpfs   defaults        0 0
+sysfs           /sys            sysfs   defaults        0 0
+proc            /proc           proc    defaults        0 0
+
+6. Copy vmlinuz and create initrd
+cp /boot/vmlinuz-2.6.32-358.el6.x86_64 /var/lib/tftpboot/
+dracut -f /var/lib/tftpboot/netboot6.img `uname -r` root=dhcp root-path=nfs:192.168.122.10:/exports/cent6
