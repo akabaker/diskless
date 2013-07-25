@@ -1,0 +1,30 @@
+Master Server
+-------------
+
+##Credentials:
+user: root
+pass: changeme
+
+user: master
+pass: changeme
+
+
+To change passwords log in as a particular user and type 'passwd'. The 
+master user has full 'sudo' rights to this system. Instead of logging
+into the system as root, ssh  into master as the master user and become
+root by executing 'sudo -i'
+
+	ssh master@192.168.122.1
+	sudo -i
+
+## Network Configuration:
+NIC 1 is the interface for the DHCP server and should be plugged into the same
+switch/vlan as the clients.
+
+IP: 192.168.122.1
+NETMASK: 255.255.255.0
+
+NIC 2 is set to DHCP and could be used as the master server managment interface.
+
+john@xobaa.com
+
