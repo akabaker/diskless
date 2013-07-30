@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# chkconfig: 35 0 99
+# description: startup
+#
+# Functions library
+. /etc/init.d/functions
+
+start() {
+        mkdir /tmp/var
+        mount -t tmpfs -o size=100m tmpfs /tmp/var
+        echo -e 'Copying /var to temporary storage\n'
+        rsync -a /var/ /tmp/var/
+        mount --move /tmp/var /var
+        mkdir /var/run/utmp
+}
+
+stop() {
+        echo 'stopping'
+}
+
+case "$1" in
+        start)
+                start
+                ;;
+        stop)
+                stop
+                ;;
+        *)
+                echo $"Usage: $0 {start|stop}"
+                exit 1
+esac
+exit 0
