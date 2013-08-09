@@ -38,3 +38,34 @@ proc            /proc           proc    defaults        0 0
 6. Copy vmlinuz and create initrd
 cp /boot/vmlinuz-2.6.32-358.el6.x86_64 /var/lib/tftpboot/
 dracut -f /var/lib/tftpboot/netboot6.img `uname -r` root=dhcp root-path=nfs:192.168.122.10:/exports/cent6
+
+## Updating client software
+On master (as root):
+chroot /exports/cent6
+yum install httpd #or what ever package(s) that are needed
+
+If you are installing software from source, the same method would
+apply. Chroot into the exported directory (/exports/cent6) and then
+perform the required steps to install your software. Updating the
+kernel on the client image will require a new intird, here is how you
+can do that:
+
+On master as root:
+
+## Updating client kernel
+On master as root:
+  yum update -y
+  reboot
+
+# Copy new boot to the client directory
+rsync -av --delete /boot/ /exports/cent6/boot/
+
+#Update the kernel image
+cp /boot/vmlinuz-2.6.32-358.el6.x86_64 /var/lib/tftpboot/
+
+#build the new intrid
+dracut -f /var/lib/tftpboot/netboot6.img `uname -r` root=dhcp root-path=nfs:192.168.122.10:/exports/cent6
+
+#Update the default pxeboot configuration file for the new kernel
+#Edit the 'kernel' line for your new kernel version
+kernel /vmlinuz-2.6.32-358.14.1.el6.x86_64  
