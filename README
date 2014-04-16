@@ -1,16 +1,45 @@
-### Install
+### Getting a new master configured
 
-xinetd nfs rpcbind nfs-utils-lib dracut-network syslinux
+# Network
+vi etc/sysconfig/network-scripts/ifcfg-eth0
+
+Add:
+    IPADDR="192.168.122.10"
+    NETMASK="255.255.255.0"
+
+Change 
+    BOOTPROTO=static
+
+Write the file out, then
+    ifup eth0
+
+
+# Iptables:
+Add the following line to /etc/sysconfig/iptables and write the file out:
+
+    -A INPUT -p udp -m multiport --dports 67,69 -j ACCEPT
+
+Then
+
+    service iptables restart
+### Install required packages
+
+yum xinetd rpcbind nfs-utils-lib dracut-network syslinux tftp-server dhcp rsync
 
 ### Configure
 1.
     mkdir /var/lib/tftpboot
-    yum install tftp-server tftp dhcp
     vim /etc/xinetd.d/tftp 
-    yum install xinetd sysling dracut-network syslinux
     cp /usr/share/syslinux/pxelinux.0 /var/lib/tftpboot/
     mkdir -p /var/lib/tftpboot/pxelinux.cfg
 
+    Copy the contentx of the 'default' file into:
+        /var/lib/tftpboot/pxelinux.cfg/default
+
+    # Note, be sure to update the 'kernel' line to your current running kernel
+    # Find the current running kernel with `uname -r`
+    # Then, update the numbers after '/vmlinuz-' with the output of 'uname -r'
+    # kernel /vmlinuz-2.6.32-431.5.1.el6.x86_64
 2   /etc/xinetd.d/tftp (DISABLE NO)
 3. Set up dhcp
 4. Set up nfs export, server
@@ -20,7 +49,11 @@ xinetd nfs rpcbind nfs-utils-lib dracut-network syslinux
     or
     rsync -a --exclude='/proc/*' --exclude='/sys/*' --exclude='/exports/' / /exports/cent6/
 
-6. fstab
+6. Client's fstab
+
+chroot /exports/cent6
+
+vim /etc/fstab (put the following contents into the file)
 #
 # /etc/fstab
 # Created by anaconda on Sun Jul 14 17:34:15 2013
@@ -35,19 +68,50 @@ tmpfs           /dev/shm        tmpfs   defaults        0 0
 sysfs           /sys            sysfs   defaults        0 0
 proc            /proc           proc    defaults        0 0
 
-6. Copy vmlinuz and create initrd
-cp /boot/vmlinuz-2.6.32-358.el6.x86_64 /var/lib/tftpboot/
-dracut -f /var/lib/tftpboot/netboot6.img `uname -r` root=dhcp root-path=nfs:192.168.122.10:/exports/cent6
+Write the file out and exit.
+"Literally type 'exit' to exit the chroot"
+    exit
 
-## Updating client software
+
+7. Update /etc/dhcpd.conf
+Copy contents 'dhcpd.conf' to /etc/dhcpd.conf on the master
+
+service dhcpd start
+chkconfig dhcpd on
+
+
+8. Set up /etc/exports
+Copy the following contents into /etc/exports:
+
+    /exports/cent6 *(ro,async,no_root_squash)
+
+service rpcbind start
+chkconfig rpcbind on
+service nfs start
+chkconfig nfs on
+
+
+9. Copy vmlinuz and create initrd
+cp /boot/vmlinuz-`uname -r` /var/lib/tftpboot/
+dracut -f /var/lib/tftpboot/netboot6.img `uname -r` root=dhcp root-path=nfs:192.168.122.10:/exports/cent6
+chmod 644 /var/lib/tftpboot/netboot6.img
+
+
+10. Make the pxelinux.cfg directory and default pxe file
+mkdir /
+
+## How to update client software/install new packages for the clients
 On master (as root):
 chroot /exports/cent6
 yum install httpd #or what ever package(s) that are needed
 
 If you are installing software from source, the same method would
 apply. Chroot into the exported directory (/exports/cent6) and then
-perform the required steps to install your software. Updating the
-kernel on the client image will require a new intird, here is how you
+perform the required steps to install your software. 
+
+
+## Updating the kernel on the clients
+Updating the kernel on the client image will require a new intird, here is how you
 can do that:
 
 On master as root:
@@ -61,11 +125,17 @@ On master as root:
 rsync -av --delete /boot/ /exports/cent6/boot/
 
 #Update the kernel image
-cp /boot/vmlinuz-2.6.32-358.el6.x86_64 /var/lib/tftpboot/
+cp /boot/vmlinuz-`uname -r` /var/lib/tftpboot/
 
 #build the new intrid
 dracut -f /var/lib/tftpboot/netboot6.img `uname -r` root=dhcp root-path=nfs:192.168.122.10:/exports/cent6
+chmod 644 /var/lib/tftpboot/netboot6.img
 
 #Update the default pxeboot configuration file for the new kernel
 #Edit the 'kernel' line for your new kernel version
-kernel /vmlinuz-2.6.32-358.14.1.el6.x86_64  
+Find the running kernel:
+
+    uname -r
+
+Then, update /var/lib
+    kernel /vmlinuz-2.6.32-358.14.1.el6.x86_64  
